@@ -1,7 +1,14 @@
+//
+//  ImageTests.swift
+//  UIKitTabView
+//
+//  Created by Huigyun Jeong on 10/2/26.
+//
+
 import SwiftUI
 import Testing
 
-@testable import UIKitTabBar
+@testable import UIKitTabView
 
 @Suite
 @MainActor
@@ -17,7 +24,7 @@ struct ImageTests {
     func customImagesArePreservedDuringCreationAndUpdate() {
         let normal = makeImage(.red)
         let selected = makeImage(.blue)
-        let original = TabBarItem("Home", image: normal, selectedImage: selected, value: "home") {
+        let original = UIKitTab("Home", image: normal, selectedImage: selected, value: "home") {
             Text("Home")
         }
         let controller = original.makeViewController()
@@ -26,7 +33,7 @@ struct ImageTests {
         #expect(controller.tabBarItem.selectedImage?.renderingMode == .alwaysOriginal)
         #expect(controller.tabBarItem.image?.renderingMode == .alwaysOriginal)
 
-        let replacement = TabBarItem("Updated", image: selected, selectedImage: normal, value: "home") {
+        let replacement = UIKitTab("Updated", image: selected, selectedImage: normal, value: "home") {
             Text("Updated")
         }
         #expect(replacement.updateViewController(controller))
@@ -38,7 +45,7 @@ struct ImageTests {
     @Test
     func unboundItemsAcceptCustomImages() {
         let image = makeImage(.green)
-        let item: TabBarItem<Never> = TabBarItem("Home", image: image) {
+        let item: UIKitTab<Never> = UIKitTab("Home", image: image) {
             Text("Home")
         }
         let controller = item.makeViewController()
@@ -49,13 +56,13 @@ struct ImageTests {
 
     @Test
     func symbolNamesResolveForBoundAndUnboundItems() {
-        let bound = TabBarItem(image: "house", selectedImage: "house.fill", value: "home") {
+        let bound = UIKitTab(image: "house", selectedImage: "house.fill", value: "home") {
             Text("Home")
         }
-        let unbound = TabBarItem(image: "house", selectedImage: "house.fill") {
+        let unbound = UIKitTab(image: "house", selectedImage: "house.fill") {
             Text("Home")
         }
-        let basic = TabBarItem("Home", image: "house", value: "home") {
+        let basic = UIKitTab("Home", image: "house", value: "home") {
             Text("Home")
         }
         let basicController = basic.makeViewController()
@@ -73,11 +80,11 @@ struct ImageTests {
     @Test
     func absentAndInvalidImagesClearExistingImages() {
         let image = makeImage(.red)
-        let original = TabBarItem(image: image, selectedImage: image) {
+        let original = UIKitTab(image: image, selectedImage: image) {
             Text("Home")
         }
         let controller = original.makeViewController()
-        let noImages = TabBarItem(image: nil, selectedImage: nil) {
+        let noImages = UIKitTab(image: nil, selectedImage: nil) {
             Text("Home")
         }
         #expect(noImages.updateViewController(controller))
@@ -85,7 +92,7 @@ struct ImageTests {
         #expect(controller.tabBarItem.selectedImage == nil)
 
         #expect(original.updateViewController(controller))
-        let invalidNames = TabBarItem(image: "invalid.symbol.for.testing", selectedImage: "invalid.symbol.for.testing") {
+        let invalidNames = UIKitTab(image: "invalid.symbol.for.testing", selectedImage: "invalid.symbol.for.testing") {
             Text("Home")
         }
         #expect(invalidNames.updateViewController(controller))
@@ -98,10 +105,10 @@ struct ImageTests {
         let title = "prefix Home".dropFirst(7)
         let image = makeImage(.green)
         let controllers = [
-            TabBarItem(title, image: image, value: "home") { Text("Home") }.makeViewController(),
-            TabBarItem(title, image: image) { Text("Home") }.makeViewController(),
-            TabBarItem(title, image: "house", value: "home") { Text("Home") }.makeViewController(),
-            TabBarItem(title, image: "house") { Text("Home") }.makeViewController(),
+            UIKitTab(title, image: image, value: "home") { Text("Home") }.makeViewController(),
+            UIKitTab(title, image: image) { Text("Home") }.makeViewController(),
+            UIKitTab(title, image: "house", value: "home") { Text("Home") }.makeViewController(),
+            UIKitTab(title, image: "house") { Text("Home") }.makeViewController(),
         ]
         for controller in controllers {
             #expect(controller.tabBarItem.title == "Home")

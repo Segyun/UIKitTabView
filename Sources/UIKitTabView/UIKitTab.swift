@@ -1,6 +1,6 @@
 //
-//  TabBarItem.swift
-//  UIKitTabBar
+//  UIKitTab.swift
+//  UIKitTabView
 //
 //  Created by Huigyun Jeong on 10/2/26.
 //
@@ -9,14 +9,14 @@ import SwiftUI
 
 /// A UIKit tab item that hosts SwiftUI content and optionally carries a selection value.
 @MainActor
-public struct TabBarItem<SelectionValue: Hashable> {
+public struct UIKitTab<SelectionValue: Hashable> {
     public let value: SelectionValue?
 
     let makeViewController: () -> UIViewController
     let updateViewController: (UIViewController) -> Bool
 }
 
-extension TabBarItem {
+extension UIKitTab {
     /// Creates a selection-valued item using UIKit images.
     @MainActor
     public init<S: StringProtocol, Content: View>(
@@ -131,7 +131,7 @@ extension TabBarItem {
     }
 }
 
-extension TabBarItem where SelectionValue == Never {
+extension UIKitTab where SelectionValue == Never {
     /// Creates an item without an external selection value using UIKit images.
     @MainActor
     public init<S: StringProtocol, Content: View>(

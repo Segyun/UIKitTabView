@@ -1,6 +1,6 @@
 //
 //  SelectionTests.swift
-//  UIKitTabBar
+//  UIKitTabView
 //
 //  Created by Huigyun Jeong on 10/2/26.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 import Testing
 
-@testable import UIKitTabBar
+@testable import UIKitTabView
 
 @Suite
 @MainActor
@@ -45,12 +45,12 @@ struct SelectionTests {
         }
     }
 
-    private func makeView(_ state: SelectionState) -> TabBarControllerView<Tab> {
-        TabBarControllerView(selection: state.binding) {
-            TabBarItem(image: "house", selectedImage: "house.fill", value: Tab.home) {
+    private func makeView(_ state: SelectionState) -> UIKitTabView<Tab> {
+        UIKitTabView(selection: state.binding) {
+            UIKitTab(image: "house", selectedImage: "house.fill", value: Tab.home) {
                 Text("Home")
             }
-            TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Tab.search)
+            UIKitTab(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Tab.search)
             {
                 Text("Search")
             }
@@ -98,12 +98,12 @@ struct SelectionTests {
         let newState = SelectionState()
         let coordinator = makeView(oldState).makeCoordinator()
         let controller = makeController()
-        let reordered = TabBarControllerView(selection: newState.binding) {
-            TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Tab.search)
+        let reordered = UIKitTabView(selection: newState.binding) {
+            UIKitTab(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Tab.search)
             {
                 Text("Search")
             }
-            TabBarItem(image: "house", selectedImage: "house.fill", value: Tab.home) {
+            UIKitTab(image: "house", selectedImage: "house.fill", value: Tab.home) {
                 Text("Home")
             }
         }
@@ -121,8 +121,8 @@ struct SelectionTests {
     @Test
     func missingSelectionAndUnknownControllerAreIgnored() {
         let state = SelectionState()
-        let onlyHome = TabBarControllerView(selection: state.binding) {
-            TabBarItem(image: "house", selectedImage: "house.fill", value: Tab.home) {
+        let onlyHome = UIKitTabView(selection: state.binding) {
+            UIKitTab(image: "house", selectedImage: "house.fill", value: Tab.home) {
                 Text("Home")
             }
         }
@@ -140,12 +140,12 @@ struct SelectionTests {
 
     @Test
     func contentOnlyInitializerPreservesUserSelectionAcrossUpdates() {
-        func makeUnboundView() -> TabBarControllerView<Never> {
-            TabBarControllerView {
-                TabBarItem(image: "house", selectedImage: "house.fill") {
+        func makeUnboundView() -> UIKitTabView<Never> {
+            UIKitTabView {
+                UIKitTab(image: "house", selectedImage: "house.fill") {
                     Text("Home")
                 }
-                TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass") {
+                UIKitTab(image: "magnifyingglass", selectedImage: "magnifyingglass") {
                     Text("Search")
                 }
             }
@@ -167,11 +167,11 @@ struct SelectionTests {
     @Test
     func optionalSelectionCanSelectATaggedNilValue() {
         let state = OptionalSelectionState()
-        let view = TabBarControllerView(selection: state.binding) {
-            TabBarItem(image: "house", selectedImage: "house.fill", value: Optional<Tab>.some(.home)) {
+        let view = UIKitTabView(selection: state.binding) {
+            UIKitTab(image: "house", selectedImage: "house.fill", value: Optional<Tab>.some(.home)) {
                 Text("Home")
             }
-            TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Optional<Tab>.none) {
+            UIKitTab(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Optional<Tab>.none) {
                 Text("No selection value")
             }
         }

@@ -1,6 +1,6 @@
 //
-//  TabBarControllerView.swift
-//  UIKitTabBar
+//  UIKitTabView.swift
+//  UIKitTabView
 //
 //  Created by Huigyun Jeong on 10/2/26.
 //
@@ -8,15 +8,15 @@
 import SwiftUI
 
 @MainActor
-public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRepresentable {
+public struct UIKitTabView<SelectionValue: Hashable>: UIViewControllerRepresentable {
     private let selection: Binding<SelectionValue>?
-    private let tabs: [TabBarItem<SelectionValue>]
+    private let tabs: [UIKitTab<SelectionValue>]
 
     /// Creates tabs whose unique values are synchronized with the selection binding.
     /// A selection without a matching tab leaves UIKit's current selection unchanged.
     public init(
         selection: Binding<SelectionValue>,
-        @TabBarBuilder<SelectionValue> content: () -> [TabBarItem<SelectionValue>]
+        @UIKitTabBuilder<SelectionValue> content: () -> [UIKitTab<SelectionValue>]
     ) {
         self.selection = selection
         self.tabs = content()
@@ -69,13 +69,13 @@ public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRe
 
     @MainActor
     public final class Coordinator: NSObject, UITabBarControllerDelegate {
-        private var parent: TabBarControllerView
+        private var parent: UIKitTabView
 
-        fileprivate init(parent: TabBarControllerView) {
+        fileprivate init(parent: UIKitTabView) {
             self.parent = parent
         }
 
-        func update(parent: TabBarControllerView) {
+        func update(parent: UIKitTabView) {
             self.parent = parent
         }
 
@@ -117,10 +117,10 @@ public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRe
     }
 }
 
-extension TabBarControllerView where SelectionValue == Never {
+extension UIKitTabView where SelectionValue == Never {
     /// Creates tabs without an external selection binding.
     public init(
-        @TabBarBuilder<Never> content: () -> [TabBarItem<Never>]
+        @UIKitTabBuilder<Never> content: () -> [UIKitTab<Never>]
     ) {
         self.selection = nil
         self.tabs = content()

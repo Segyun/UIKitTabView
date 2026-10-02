@@ -1,6 +1,6 @@
 //
-//  TabBarControllerView+Preview.swift
-//  UIKitTabBar
+//  UIKitTabView+Preview.swift
+//  UIKitTabView
 //
 //  Created by Huigyun Jeong on 10/2/26.
 //
@@ -16,8 +16,8 @@ private struct TabBarPreview: View {
     @State private var selection: PreviewTab = .search
 
     var body: some View {
-        TabBarControllerView(selection: $selection) {
-            TabBarItem(
+        UIKitTabView(selection: $selection) {
+            UIKitTab(
                 "Home",
                 image: "house",
                 selectedImage: "house.fill",
@@ -26,7 +26,7 @@ private struct TabBarPreview: View {
                 Text("Home")
             }
 
-            TabBarItem(
+            UIKitTab(
                 "Search",
                 image: "magnifyingglass",
                 selectedImage: "magnifyingglass",
@@ -35,7 +35,7 @@ private struct TabBarPreview: View {
                 Text("Search")
             }
 
-            TabBarItem(
+            UIKitTab(
                 "Alerts",
                 image: "bell",
                 selectedImage: "bell.fill",
@@ -44,7 +44,7 @@ private struct TabBarPreview: View {
                 Text("Alerts")
             }
 
-            TabBarItem(
+            UIKitTab(
                 "Saved",
                 image: "bookmark",
                 selectedImage: "bookmark.fill",
@@ -53,7 +53,7 @@ private struct TabBarPreview: View {
                 Text("Saved")
             }
 
-            TabBarItem(
+            UIKitTab(
                 "Profile",
                 image: "person",
                 selectedImage: "person.fill",
@@ -73,11 +73,11 @@ private struct TabBarPreview: View {
 }
 
 #Preview("Without selection") {
-    TabBarControllerView {
-        TabBarItem("Home", image: "house", selectedImage: "house.fill") {
+    UIKitTabView {
+        UIKitTab("Home", image: "house", selectedImage: "house.fill") {
             Text("Home")
         }
-        TabBarItem("Search", image: "magnifyingglass", selectedImage: "magnifyingglass") {
+        UIKitTab("Search", image: "magnifyingglass", selectedImage: "magnifyingglass") {
             Text("Search")
         }
     }
