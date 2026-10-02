@@ -24,5 +24,9 @@ let package = Package(
                 .enableUpcomingFeature("ApproachableConcurrency")
             ],
         ),
+        .testTarget(
+            name: "UIKitTabBarTests",
+            dependencies: ["UIKitTabBar"]
+        ),
     ]
 )
