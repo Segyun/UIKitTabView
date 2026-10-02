@@ -7,19 +7,95 @@
 
 import SwiftUI
 
-// MARK: - TabBarItem
-
+/// A UIKit tab item that hosts SwiftUI content and optionally carries a selection value.
 @MainActor
-public func TabBarItem<SelectionValue: Hashable, Content: View>(
-    value: SelectionValue,
-    title: String? = nil,
-    icon: String,
-    selectedIcon: String,
-    @ViewBuilder content: @escaping () -> Content
-) -> TabBarItemConfiguration<SelectionValue> {
-    TabBarItemConfiguration(
-        value: value,
-        makeViewController: {
+public struct TabBarItem<SelectionValue: Hashable> {
+    public let value: SelectionValue?
+
+    let makeViewController: () -> UIViewController
+    let updateViewController: (UIViewController) -> Bool
+}
+
+extension TabBarItem {
+    /// Creates a selection-valued item using UIKit images.
+    @MainActor
+    public init<S: StringProtocol, Content: View>(
+        _ title: S,
+        image: UIImage?,
+        selectedImage: UIImage? = nil,
+        value: SelectionValue,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            Optional(String(title)),
+            image: image,
+            selectedImage: selectedImage,
+            value: .some(value),
+            content: content
+        )
+    }
+
+    /// Creates a selection-valued item using SF Symbols names.
+    @MainActor
+    public init<S: StringProtocol, Content: View>(
+        _ title: S,
+        image: String,
+        selectedImage: String? = nil,
+        value: SelectionValue,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            title,
+            image: UIImage(systemName: image),
+            selectedImage: selectedImage.flatMap { UIImage(systemName: $0) },
+            value: value,
+            content: content
+        )
+    }
+
+    /// Creates a selection-valued item using UIKit images.
+    @MainActor
+    public init<Content: View>(
+        image: UIImage?,
+        selectedImage: UIImage? = nil,
+        value: SelectionValue,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            nil,
+            image: image,
+            selectedImage: selectedImage,
+            value: .some(value),
+            content: content
+        )
+    }
+
+    /// Creates a selection-valued item using SF Symbols names.
+    @MainActor
+    public init<Content: View>(
+        image: String,
+        selectedImage: String? = nil,
+        value: SelectionValue,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            image: UIImage(systemName: image),
+            selectedImage: selectedImage.flatMap { UIImage(systemName: $0) },
+            value: value,
+            content: content
+        )
+    }
+
+    @MainActor
+    private init<Content: View>(
+        _ title: String?,
+        image: UIImage?,
+        selectedImage: UIImage?,
+        value: SelectionValue?,
+        content: @escaping () -> Content
+    ) {
+        self.value = value
+        self.makeViewController = {
             let hostingController = UIHostingController(
                 rootView: content()
             )
@@ -27,13 +103,13 @@ public func TabBarItem<SelectionValue: Hashable, Content: View>(
             configureTabBarItem(
                 hostingController.tabBarItem,
                 title: title,
-                icon: icon,
-                selectedIcon: selectedIcon
+                image: image,
+                selectedImage: selectedImage
             )
 
             return hostingController
-        },
-        updateViewController: { viewController in
+        }
+        self.updateViewController = { viewController in
             guard
                 let hostingController =
                     viewController as? UIHostingController<Content>
@@ -46,30 +122,78 @@ public func TabBarItem<SelectionValue: Hashable, Content: View>(
             configureTabBarItem(
                 hostingController.tabBarItem,
                 title: title,
-                icon: icon,
-                selectedIcon: selectedIcon
+                image: image,
+                selectedImage: selectedImage
             )
 
             return true
         }
-    )
+    }
 }
 
-/// Creates an item for a tab bar that manages selection internally.
-@MainActor
-public func TabBarItem<Content: View>(
-    title: String? = nil,
-    icon: String,
-    selectedIcon: String,
-    @ViewBuilder content: @escaping () -> Content
-) -> TabBarItemConfiguration<Int> {
-    TabBarItem(
-        value: 0,
-        title: title,
-        icon: icon,
-        selectedIcon: selectedIcon,
-        content: content
-    )
+extension TabBarItem where SelectionValue == Never {
+    /// Creates an item without an external selection value using UIKit images.
+    @MainActor
+    public init<S: StringProtocol, Content: View>(
+        _ title: S,
+        image: UIImage?,
+        selectedImage: UIImage? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            Optional(String(title)),
+            image: image,
+            selectedImage: selectedImage,
+            value: nil,
+            content: content
+        )
+    }
+
+    /// Creates an item without an external selection value using SF Symbols names.
+    @MainActor
+    public init<S: StringProtocol, Content: View>(
+        _ title: S,
+        image: String,
+        selectedImage: String? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            title,
+            image: UIImage(systemName: image),
+            selectedImage: selectedImage.flatMap { UIImage(systemName: $0) },
+            content: content
+        )
+    }
+
+    /// Creates an item without an external selection value using UIKit images.
+    @MainActor
+    public init<Content: View>(
+        image: UIImage?,
+        selectedImage: UIImage? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            nil,
+            image: image,
+            selectedImage: selectedImage,
+            value: nil,
+            content: content
+        )
+    }
+
+    /// Creates an item without an external selection value using SF Symbols names.
+    @MainActor
+    public init<Content: View>(
+        image: String,
+        selectedImage: String? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            image: UIImage(systemName: image),
+            selectedImage: selectedImage.flatMap { UIImage(systemName: $0) },
+            content: content
+        )
+    }
 }
 
 // MARK: - Tab Bar Item Configuration
@@ -78,10 +202,10 @@ public func TabBarItem<Content: View>(
 private func configureTabBarItem(
     _ item: UITabBarItem,
     title: String?,
-    icon: String,
-    selectedIcon: String
+    image: UIImage?,
+    selectedImage: UIImage?
 ) {
     item.title = title
-    item.image = UIImage(systemName: icon)
-    item.selectedImage = UIImage(systemName: selectedIcon)
+    item.image = image
+    item.selectedImage = selectedImage
 }

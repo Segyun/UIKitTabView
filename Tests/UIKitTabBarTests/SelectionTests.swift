@@ -33,12 +33,24 @@ struct SelectionTests {
         }
     }
 
+    @MainActor
+    private final class OptionalSelectionState {
+        var value: Tab? = .home
+
+        var binding: Binding<Tab?> {
+            Binding(
+                get: { self.value },
+                set: { self.value = $0 }
+            )
+        }
+    }
+
     private func makeView(_ state: SelectionState) -> TabBarControllerView<Tab> {
         TabBarControllerView(selection: state.binding) {
-            TabBarItem(value: Tab.home, icon: "house", selectedIcon: "house.fill") {
+            TabBarItem(image: "house", selectedImage: "house.fill", value: Tab.home) {
                 Text("Home")
             }
-            TabBarItem(value: Tab.search, icon: "magnifyingglass", selectedIcon: "magnifyingglass")
+            TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Tab.search)
             {
                 Text("Search")
             }
@@ -87,11 +99,11 @@ struct SelectionTests {
         let coordinator = makeView(oldState).makeCoordinator()
         let controller = makeController()
         let reordered = TabBarControllerView(selection: newState.binding) {
-            TabBarItem(value: Tab.search, icon: "magnifyingglass", selectedIcon: "magnifyingglass")
+            TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Tab.search)
             {
                 Text("Search")
             }
-            TabBarItem(value: Tab.home, icon: "house", selectedIcon: "house.fill") {
+            TabBarItem(image: "house", selectedImage: "house.fill", value: Tab.home) {
                 Text("Home")
             }
         }
@@ -110,7 +122,7 @@ struct SelectionTests {
     func missingSelectionAndUnknownControllerAreIgnored() {
         let state = SelectionState()
         let onlyHome = TabBarControllerView(selection: state.binding) {
-            TabBarItem(value: Tab.home, icon: "house", selectedIcon: "house.fill") {
+            TabBarItem(image: "house", selectedImage: "house.fill", value: Tab.home) {
                 Text("Home")
             }
         }
@@ -128,12 +140,12 @@ struct SelectionTests {
 
     @Test
     func contentOnlyInitializerPreservesUserSelectionAcrossUpdates() {
-        func makeUnboundView() -> TabBarControllerView<Int> {
+        func makeUnboundView() -> TabBarControllerView<Never> {
             TabBarControllerView {
-                TabBarItem(icon: "house", selectedIcon: "house.fill") {
+                TabBarItem(image: "house", selectedImage: "house.fill") {
                     Text("Home")
                 }
-                TabBarItem(icon: "magnifyingglass", selectedIcon: "magnifyingglass") {
+                TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass") {
                     Text("Search")
                 }
             }
@@ -151,4 +163,29 @@ struct SelectionTests {
 
         #expect(controller.selectedIndex == 1)
     }
+
+    @Test
+    func optionalSelectionCanSelectATaggedNilValue() {
+        let state = OptionalSelectionState()
+        let view = TabBarControllerView(selection: state.binding) {
+            TabBarItem(image: "house", selectedImage: "house.fill", value: Optional<Tab>.some(.home)) {
+                Text("Home")
+            }
+            TabBarItem(image: "magnifyingglass", selectedImage: "magnifyingglass", value: Optional<Tab>.none) {
+                Text("No selection value")
+            }
+        }
+        let coordinator = view.makeCoordinator()
+        let controller = makeController()
+
+        state.value = nil
+        coordinator.applySelection(to: controller)
+        #expect(controller.selectedIndex == 1)
+
+        coordinator.tabBarController(controller, didSelect: controller.viewControllers![0])
+        #expect(state.value == .home)
+        coordinator.tabBarController(controller, didSelect: controller.viewControllers![1])
+        #expect(state.value == nil)
+    }
+
 }

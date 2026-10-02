@@ -12,8 +12,8 @@ import SwiftUI
 @resultBuilder
 public struct TabBarBuilder<SelectionValue: Hashable> {
     public static func buildBlock(
-        _ components: TabBarItemConfiguration<SelectionValue>...
-    ) -> [TabBarItemConfiguration<SelectionValue>] {
+        _ components: TabBarItem<SelectionValue>...
+    ) -> [TabBarItem<SelectionValue>] {
         components
     }
 }

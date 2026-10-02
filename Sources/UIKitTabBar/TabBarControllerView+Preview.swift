@@ -18,46 +18,46 @@ private struct TabBarPreview: View {
     var body: some View {
         TabBarControllerView(selection: $selection) {
             TabBarItem(
-                value: PreviewTab.home,
-                title: "Home",
-                icon: "house",
-                selectedIcon: "house.fill"
+                "Home",
+                image: "house",
+                selectedImage: "house.fill",
+                value: PreviewTab.home
             ) {
                 Text("Home")
             }
 
             TabBarItem(
-                value: PreviewTab.search,
-                title: "Search",
-                icon: "magnifyingglass",
-                selectedIcon: "magnifyingglass"
+                "Search",
+                image: "magnifyingglass",
+                selectedImage: "magnifyingglass",
+                value: PreviewTab.search
             ) {
                 Text("Search")
             }
 
             TabBarItem(
-                value: PreviewTab.alerts,
-                title: "Alerts",
-                icon: "bell",
-                selectedIcon: "bell.fill"
+                "Alerts",
+                image: "bell",
+                selectedImage: "bell.fill",
+                value: PreviewTab.alerts
             ) {
                 Text("Alerts")
             }
 
             TabBarItem(
-                value: PreviewTab.saved,
-                title: "Saved",
-                icon: "bookmark",
-                selectedIcon: "bookmark.fill"
+                "Saved",
+                image: "bookmark",
+                selectedImage: "bookmark.fill",
+                value: PreviewTab.saved
             ) {
                 Text("Saved")
             }
 
             TabBarItem(
-                value: PreviewTab.profile,
-                title: "Profile",
-                icon: "person",
-                selectedIcon: "person.fill"
+                "Profile",
+                image: "person",
+                selectedImage: "person.fill",
+                value: PreviewTab.profile
             ) {
                 Text("Profile")
             }
@@ -74,10 +74,10 @@ private struct TabBarPreview: View {
 
 #Preview("Without selection") {
     TabBarControllerView {
-        TabBarItem(title: "Home", icon: "house", selectedIcon: "house.fill") {
+        TabBarItem("Home", image: "house", selectedImage: "house.fill") {
             Text("Home")
         }
-        TabBarItem(title: "Search", icon: "magnifyingglass", selectedIcon: "magnifyingglass") {
+        TabBarItem("Search", image: "magnifyingglass", selectedImage: "magnifyingglass") {
             Text("Search")
         }
     }

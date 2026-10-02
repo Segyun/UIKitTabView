@@ -10,13 +10,13 @@ import SwiftUI
 @MainActor
 public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRepresentable {
     private let selection: Binding<SelectionValue>?
-    private let tabs: [TabBarItemConfiguration<SelectionValue>]
+    private let tabs: [TabBarItem<SelectionValue>]
 
     /// Creates tabs whose unique values are synchronized with the selection binding.
     /// A selection without a matching tab leaves UIKit's current selection unchanged.
     public init(
         selection: Binding<SelectionValue>,
-        @TabBarBuilder<SelectionValue> content: () -> [TabBarItemConfiguration<SelectionValue>]
+        @TabBarBuilder<SelectionValue> content: () -> [TabBarItem<SelectionValue>]
     ) {
         self.selection = selection
         self.tabs = content()
@@ -81,8 +81,8 @@ public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRe
 
         func applySelection(to tabBarController: UITabBarController) {
             guard
-                let selection = parent.selection?.wrappedValue,
-                let index = parent.tabs.firstIndex(where: { $0.value == selection }),
+                let selection = parent.selection,
+                let index = parent.tabs.firstIndex(where: { $0.value == .some(selection.wrappedValue) }),
                 let viewControllers = tabBarController.viewControllers,
                 viewControllers.indices.contains(index),
                 tabBarController.selectedIndex != index
@@ -107,7 +107,9 @@ public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRe
                 return
             }
 
-            let value = parent.tabs[index].value
+            guard let value = parent.tabs[index].value else {
+                return
+            }
             if selection.wrappedValue != value {
                 selection.wrappedValue = value
             }
@@ -115,18 +117,12 @@ public struct TabBarControllerView<SelectionValue: Hashable>: UIViewControllerRe
     }
 }
 
-extension TabBarControllerView where SelectionValue == Int {
+extension TabBarControllerView where SelectionValue == Never {
     /// Creates tabs without an external selection binding.
     public init(
-        @TabBarBuilder<Int> content: () -> [TabBarItemConfiguration<Int>]
+        @TabBarBuilder<Never> content: () -> [TabBarItem<Never>]
     ) {
         self.selection = nil
-        self.tabs = content().enumerated().map { index, tab in
-            TabBarItemConfiguration(
-                value: index,
-                makeViewController: tab.makeViewController,
-                updateViewController: tab.updateViewController
-            )
-        }
+        self.tabs = content()
     }
 }
