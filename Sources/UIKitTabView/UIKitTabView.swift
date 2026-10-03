@@ -27,9 +27,10 @@ public struct UIKitTabView<SelectionValue: Hashable>: UIViewControllerRepresenta
     }
 
     public func makeUIViewController(context: Context) -> UITabBarController {
-        let tabBarController = UITabBarController()
+        let tabBarController: UITabBarController = .init()
         tabBarController.delegate = context.coordinator
-        tabBarController.viewControllers = tabs.map { $0.makeViewController() }
+        tabBarController.viewControllers = tabs
+            .map { $0.makeUIViewController(environment: context.environment) }
         context.coordinator.applySelection(to: tabBarController)
         return tabBarController
     }
@@ -39,7 +40,7 @@ public struct UIKitTabView<SelectionValue: Hashable>: UIViewControllerRepresenta
         context: Context
     ) {
         context.coordinator.update(parent: self)
-        updateTabs(in: tabBarController)
+        updateTabs(in: tabBarController, context: context)
         context.coordinator.applySelection(to: tabBarController)
     }
 
@@ -50,18 +51,18 @@ public struct UIKitTabView<SelectionValue: Hashable>: UIViewControllerRepresenta
         tabBarController.delegate = nil
     }
 
-    private func updateTabs(in tabBarController: UITabBarController) {
+    private func updateTabs(in tabBarController: UITabBarController, context: Context) {
         guard
             let viewControllers = tabBarController.viewControllers,
             viewControllers.count == tabs.count
         else {
-            tabBarController.viewControllers = tabs.map { $0.makeViewController() }
+            tabBarController.viewControllers = tabs.map { $0.makeUIViewController(environment: context.environment) }
             return
         }
 
         for (viewController, tab) in zip(viewControllers, tabs) {
-            if !tab.updateViewController(viewController) {
-                tabBarController.viewControllers = tabs.map { $0.makeViewController() }
+            if !tab.updateUIViewController(viewController, environment: context.environment) {
+                tabBarController.viewControllers = tabs.map { $0.makeUIViewController(environment: context.environment) }
                 return
             }
         }

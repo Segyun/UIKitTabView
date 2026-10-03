@@ -27,7 +27,7 @@ struct ImageTests {
         let original = UIKitTab("Home", image: normal, selectedImage: selected, value: "home") {
             Text("Home")
         }
-        let controller = original.makeViewController()
+        let controller = original.makeUIViewController(environment: .init())
         #expect(controller.tabBarItem.image === normal)
         #expect(controller.tabBarItem.selectedImage?.pngData() == selected.pngData())
         #expect(controller.tabBarItem.selectedImage?.renderingMode == .alwaysOriginal)
@@ -36,7 +36,7 @@ struct ImageTests {
         let replacement = UIKitTab("Updated", image: selected, selectedImage: normal, value: "home") {
             Text("Updated")
         }
-        #expect(replacement.updateViewController(controller))
+        #expect(replacement.updateUIViewController(controller, environment: .init()))
         #expect(controller.tabBarItem.title == "Updated")
         #expect(controller.tabBarItem.image === selected)
         #expect(controller.tabBarItem.selectedImage?.pngData() == normal.pngData())
@@ -48,7 +48,7 @@ struct ImageTests {
         let item: UIKitTab<Never> = UIKitTab("Home", image: image) {
             Text("Home")
         }
-        let controller = item.makeViewController()
+        let controller = item.makeUIViewController(environment: .init())
         #expect(controller.tabBarItem.image === image)
         #expect(controller.tabBarItem.selectedImage?.pngData() == image.pngData())
         #expect(controller.tabBarItem.selectedImage?.renderingMode == .alwaysOriginal)
@@ -65,13 +65,13 @@ struct ImageTests {
         let basic = UIKitTab("Home", image: "house", value: "home") {
             Text("Home")
         }
-        let basicController = basic.makeViewController()
+        let basicController = basic.makeUIViewController(environment: .init())
         #expect(basicController.tabBarItem.title == "Home")
         #expect(basicController.tabBarItem.image != nil)
         #expect(basicController.tabBarItem.selectedImage != nil)
         #expect(basicController.tabBarItem.selectedImage?.size == basicController.tabBarItem.image?.size)
 
-        for controller in [bound.makeViewController(), unbound.makeViewController()] {
+        for controller in [bound.makeUIViewController(environment: .init()), unbound.makeUIViewController(environment: .init())] {
             #expect(controller.tabBarItem.image?.isEqual(UIImage(systemName: "house")) == true)
             #expect(controller.tabBarItem.selectedImage?.isEqual(UIImage(systemName: "house.fill")) == true)
         }
@@ -83,19 +83,19 @@ struct ImageTests {
         let original = UIKitTab(image: image, selectedImage: image) {
             Text("Home")
         }
-        let controller = original.makeViewController()
+        let controller = original.makeUIViewController(environment: .init())
         let noImages = UIKitTab(image: nil, selectedImage: nil) {
             Text("Home")
         }
-        #expect(noImages.updateViewController(controller))
+        #expect(noImages.updateUIViewController(controller, environment: .init()))
         #expect(controller.tabBarItem.image == nil)
         #expect(controller.tabBarItem.selectedImage == nil)
 
-        #expect(original.updateViewController(controller))
+        #expect(original.updateUIViewController(controller, environment: .init()))
         let invalidNames = UIKitTab(image: "invalid.symbol.for.testing", selectedImage: "invalid.symbol.for.testing") {
             Text("Home")
         }
-        #expect(invalidNames.updateViewController(controller))
+        #expect(invalidNames.updateUIViewController(controller, environment: .init()))
         #expect(controller.tabBarItem.image == nil)
         #expect(controller.tabBarItem.selectedImage == nil)
     }
@@ -105,10 +105,10 @@ struct ImageTests {
         let title = "prefix Home".dropFirst(7)
         let image = makeImage(.green)
         let controllers = [
-            UIKitTab(title, image: image, value: "home") { Text("Home") }.makeViewController(),
-            UIKitTab(title, image: image) { Text("Home") }.makeViewController(),
-            UIKitTab(title, image: "house", value: "home") { Text("Home") }.makeViewController(),
-            UIKitTab(title, image: "house") { Text("Home") }.makeViewController(),
+            UIKitTab(title, image: image, value: "home") { Text("Home") }.makeUIViewController(environment: .init()),
+            UIKitTab(title, image: image) { Text("Home") }.makeUIViewController(environment: .init()),
+            UIKitTab(title, image: "house", value: "home") { Text("Home") }.makeUIViewController(environment: .init()),
+            UIKitTab(title, image: "house") { Text("Home") }.makeUIViewController(environment: .init()),
         ]
         for controller in controllers {
             #expect(controller.tabBarItem.title == "Home")

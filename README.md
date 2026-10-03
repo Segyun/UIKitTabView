@@ -1,6 +1,6 @@
 # UIKitTabView
 
-<p align="center">
+<p align="center%">
   <img width="240" alt="Demo" src="https://github.com/user-attachments/assets/b216ad0b-82d6-4dca-972d-e6cd1cc6b50a" />
 </p>
 
@@ -19,7 +19,7 @@ UIKitTabView wraps `UITabBarController` and hosts SwiftUI content, with support 
 
 1. Choose **File > Add Package Dependencies**.
 2. Enter `https://github.com/Segyun/UIKitTabView.git`.
-3. Select **Up to Next Major Version** and enter `1.0.0`.
+3. Select **Up to Next Major Version** and enter `1.1.0`.
 4. Add the `UIKitTabView` library product to your app target.
 
 ### Swift Package Manager
@@ -29,7 +29,7 @@ Add the dependency to your `Package.swift`:
 ```swift
 .package(
     url: "https://github.com/Segyun/UIKitTabView.git",
-    from: "1.0.0"
+    from: "1.1.0"
 )
 ```
 
