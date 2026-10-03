@@ -1,7 +1,7 @@
 # UIKitTabView
 
-<p align="center%">
-  <img width="240" alt="Demo" src="https://github.com/user-attachments/assets/b216ad0b-82d6-4dca-972d-e6cd1cc6b50a" />
+<p align="center">
+  <img width="256" alt="Demo" src="https://github.com/user-attachments/assets/b216ad0b-82d6-4dca-972d-e6cd1cc6b50a" />
 </p>
 
 Use UIKit’s `UITabBarItem.selectedImage` in SwiftUI to give each tab a distinct image when selected.
